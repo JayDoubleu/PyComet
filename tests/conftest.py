@@ -31,12 +31,30 @@ def pytest_configure(config: Config) -> None:
 
 
 def pytest_collection_modifyitems(config: Config, items: List[Item]) -> None:
-    """Skip verbose_only tests unless --show-llm-output is specified"""
+    """Skip tests based on available API keys and --show-llm-output flag"""
+    # Skip verbose tests if flag not set
     if not config.getoption("--show-llm-output"):
         skip_verbose = pytest.mark.skip(reason="need --show-llm-output option to run")
         for item in items:
             if "verbose_only" in item.keywords:
                 item.add_marker(skip_verbose)
+    
+    # Skip tests if API keys not available
+    provider_env_map = {
+        "test_anthropic": "TEST_ANTHROPIC_API_KEY",
+        "test_openai": "TEST_OPENAI_API_KEY",
+        "test_gemini": "TEST_GEMINI_API_KEY",
+        "test_azure": "TEST_AZURE_API_KEY",
+        "test_groq": "TEST_GROQ_API_KEY",
+        "test_xai": "TEST_XAI_API_KEY",
+        "test_github": "TEST_GITHUB_API_KEY",
+        "test_openrouter": "TEST_OPENROUTER_API_KEY",
+    }
+    
+    for item in items:
+        for provider, env_var in provider_env_map.items():
+            if provider in item.name and not os.getenv(env_var):
+                item.add_marker(pytest.mark.skip(reason=f"no {env_var} available"))
 
 
 @pytest.fixture(scope="session", autouse=True)
