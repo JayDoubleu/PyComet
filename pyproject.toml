@@ -1,0 +1,100 @@
+[project]
+name = "pycomet"
+version = "0.1.0"
+description = "AI-powered Git commit messages"
+authors = [
+    {name = "Jay W", email = "git.jaydoubleu@gmail.com"},
+]
+dependencies = [
+    "click>=8.0.0",
+    "litellm==1.59.10",
+    "pyyaml>=6.0.0",
+    "python-dotenv>=1.0.0"
+]
+requires-python = ">=3.8"
+readme = "README.md"
+license = {text = "MIT"}
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project.scripts]
+pycomet = "pycomet.cli:cli"
+pcomet = "pycomet.cli:cli"
+
+[project.optional-dependencies]
+test = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "python-dotenv>=1.0.0"
+]
+dev = [
+    "black>=24.0.0",
+    "ruff>=0.3.0"
+]
+tests = [
+    "pytest>=7.4.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0.0"
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pycomet"]
+include = ["py.typed"]
+
+[tool.black]
+line-length = 88
+target-version = ["py38"]
+
+[tool.ruff]
+target-version = "py38"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+ignore = []
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-vv --capture=no"
+markers = [
+    "verbose_only: mark test that shows detailed LLM output",
+    "ai_models: mark tests that interact with AI model APIs"
+]
+filterwarnings = [
+    # Ignore all Pydantic V2 warnings
+    "ignore::UserWarning:pydantic.*:",
+    "ignore::DeprecationWarning:pydantic.*:",
+    "ignore:.*PydanticDeprecatedSince20.*:UserWarning",
+    # Ignore litellm deprecation warnings
+    "ignore:open_text is deprecated.*:DeprecationWarning:litellm.*:",
+    "ignore:'cgi' is deprecated.*:DeprecationWarning:litellm.*:",
+    # Ignore httpx content warning
+    "ignore:Use 'content=<...>' to upload raw bytes/text content.:DeprecationWarning:httpx.*:",
+    "ignore:cannot collect test class.*__init__ constructor:pytest.PytestCollectionWarning",
+]
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+check_untyped_defs = true 
+
+[dependency-groups]
+dev = [
+    "black>=24.8.0",
+    "mypy>=1.14.1",
+    "pytest>=8.3.4",
+    "pytest-cov>=5.0.0",
+    "ruff>=0.9.4",
+    "types-pyyaml>=6.0.12.20241230",
+]

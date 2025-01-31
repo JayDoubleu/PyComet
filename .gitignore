@@ -1,0 +1,96 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.dylib
+*.dll
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Environment files
+.env*
+!.env.example
+
+# Testing and coverage
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+*.cover
+*.py,cover
+
+# Type checking and linting
+.mypy_cache/
+.pytype/
+.ruff_cache/
+
+# IDE specific
+.idea/
+.vscode/
+*.code-workspace
+.history/
+*.sublime-workspace
+*.sublime-project
+
+# Editor backups
+*~
+*.bak
+*.swp
+*.swo
+
+# Project specific
+.cursor/
+.uv/
+.python-version
+uv.lock
+
+# Logs and databases
+*.log
+logs/
+*.db
+*.sqlite3
+
+# Local development
+*.local
+*.local.*
+.env.local
+.env.*.local
+
+# Documentation
+docs/_build/
+site/
+
+# Jupyter
+.ipynb_checkpoints
+
+# OS specific
+## macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+## Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+## Linux
+.directory
+.Trash-*

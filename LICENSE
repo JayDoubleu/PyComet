@@ -1,0 +1,32 @@
+                    GNU GENERAL PUBLIC LICENSE
+                       Version 3, 29 June 2007
+
+ Copyright (C) 2024 PyComet Contributors
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+                     Additional Permissions
+
+The PyComet project includes the following additional permissions under
+GNU GPL version 3 section 7:
+
+1. Integration Permission: You may integrate this software into your proprietary
+   systems for internal use without triggering the GPL's requirements for your
+   entire codebase, provided that you contribute any modifications made to the
+   PyComet code itself back to the project.
+
+2. API Usage Permission: Using PyComet through its documented API interface
+   does not constitute a derivative work under this license.
+
+For the full license text, see <https://www.gnu.org/licenses/gpl-3.0.txt> 
