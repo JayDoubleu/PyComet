@@ -1,18 +1,24 @@
 name: Code Quality Checks
 
 on:
+  push:
+    branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   code-quality:
     runs-on: ubuntu-latest
+    # Split into two workflows - one for PRs from forks, one for internal PRs
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
+          # Specify version directly as fallback if file doesn't exist
+          python-version: '3.12.2'
           python-version-file: '.python-version'
           cache: 'pip'
 
@@ -23,9 +29,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          uv pip install --system
           uv sync
-          uv add --dev black ruff mypy pre-commit
+          uv add --dev black ruff mypy pre-commit pytest pytest-cov
 
       - name: Run Black formatter check
         run: uv run black . --check
@@ -34,4 +39,33 @@ jobs:
         run: uv run ruff check .
 
       - name: Run type checking
-        run: uv run mypy . 
+        run: uv run mypy .
+
+      # Only run integration tests on internal PRs
+      - name: Run integration tests
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          TEST_ANTHROPIC_API_KEY: ${{ secrets.TEST_ANTHROPIC_API_KEY }}
+          TEST_OPENAI_API_KEY: ${{ secrets.TEST_OPENAI_API_KEY }}
+          TEST_GEMINI_API_KEY: ${{ secrets.TEST_GEMINI_API_KEY }}
+          TEST_AZURE_API_KEY: ${{ secrets.TEST_AZURE_API_KEY }}
+          TEST_AZURE_API_BASE: ${{ secrets.TEST_AZURE_API_BASE }}
+          TEST_AZURE_API_VERSION: ${{ secrets.TEST_AZURE_API_VERSION }}
+          TEST_AZURE_DEPLOYMENT_NAME: ${{ secrets.TEST_AZURE_DEPLOYMENT_NAME }}
+          TEST_GROQ_API_KEY: ${{ secrets.TEST_GROQ_API_KEY }}
+          TEST_XAI_API_KEY: ${{ secrets.TEST_XAI_API_KEY }}
+          TEST_GITHUB_API_KEY: ${{ secrets.TEST_GITHUB_API_KEY }}
+          TEST_OPENROUTER_API_KEY: ${{ secrets.TEST_OPENROUTER_API_KEY }}
+        run: uv run pytest tests/ --cov=./ --cov-report=xml
+
+      # Run unit tests only for external PRs
+      - name: Run unit tests
+        if: github.event.pull_request.head.repo.full_name != github.repository
+        run: uv run pytest tests/ --cov=./ --cov-report=xml -m "not integration"
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.xml
+          fail_ci_if_error: true

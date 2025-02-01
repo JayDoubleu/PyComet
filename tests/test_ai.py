@@ -13,33 +13,7 @@ from tests.utils import UsageMetricsCollector as TestMetrics
 class TestAIModels:
     """Test suite for different AI models"""
 
-    def _run_test(
-        self,
-        config: Dict[str, Any],
-        git_diff: str,
-        test_metrics: TestMetrics,
-        verbose: bool = False,
-    ) -> Tuple[str, ModelUsage]:
-        """Helper method to run tests and collect metrics"""
-        client = AIClient(config, verbose=verbose)
-        message = client.generate_commit_message(git_diff)
-
-        # Get usage from the client's response and handle None values
-        usage = client.last_usage if hasattr(client, "last_usage") else ModelUsage()
-        if usage is None:
-            usage = ModelUsage()
-
-        # Track metrics - ensure all values are numbers, not None
-        test_metrics.add_usage(
-            model=config["ai"]["model"],
-            input_tokens=usage.input_tokens or 0,
-            output_tokens=usage.output_tokens or 0,
-            cost=usage.total_cost if usage.total_cost is not None else 0.0,
-            char_count=len(message),
-        )
-
-        return message, usage
-
+    @pytest.mark.integration
     @pytest.mark.parametrize(
         "model_name,config_fixture",
         [
@@ -66,7 +40,7 @@ class TestAIModels:
         request: FixtureRequest,
         test_metrics: TestMetrics,
     ) -> None:
-        """Test model's ability to generate commit messages."""
+        """Integration test for model's ability to generate commit messages."""
         config = request.getfixturevalue(config_fixture)
         git_diff = request.getfixturevalue(diff_fixture)
         message, _ = self._run_test(config, git_diff, test_metrics)
@@ -74,18 +48,11 @@ class TestAIModels:
         assert message is not None, "Message should not be None"
         assert len(message) > 0, "Message should not be empty"
         assert isinstance(message, str), "Message should be a string"
-        # Define the valid commit types
-        commit_types = ["feat", "fix", "docs", "style", "refactor", "test", "chore"]
-        # Create a regex pattern to search for any of the commit types as whole words
-        pattern = r"\b(?:" + "|".join(commit_types) + r")\b"
-        match = re.search(pattern, message, re.IGNORECASE)
-        found_type = match.group(0).lower() if match else ""
 
-        # Verify that one of the valid commit types was found in the message
-        assert (
-            found_type in commit_types
-        ), f"Expected commit type not found. Found '{found_type}' instead."
+        # Verify commit message format
+        self._verify_commit_format(message)
 
+    @pytest.mark.integration
     @pytest.mark.verbose_only
     @pytest.mark.parametrize(
         "model_name,config_fixture",
@@ -114,7 +81,7 @@ class TestAIModels:
         test_metrics: TestMetrics,
         capsys: Any,
     ) -> None:
-        """Test model with verbose output."""
+        """Integration test for model with verbose output."""
         config = request.getfixturevalue(config_fixture)
         git_diff = request.getfixturevalue(diff_fixture)
 
@@ -153,3 +120,79 @@ class TestAIModels:
         print("\n" + "=" * 80 + "\n")
 
         assert message is not None and len(message) > 0
+
+    def _run_test(
+        self,
+        config: Dict[str, Any],
+        git_diff: str,
+        test_metrics: TestMetrics,
+        verbose: bool = False,
+    ) -> Tuple[str, ModelUsage]:
+        """Helper method to run tests and collect metrics"""
+        client = AIClient(config, verbose=verbose)
+        message = client.generate_commit_message(git_diff)
+
+        usage = client.last_usage if hasattr(client, "last_usage") else ModelUsage()
+        if usage is None:
+            usage = ModelUsage()
+
+        test_metrics.add_usage(
+            model=config["ai"]["model"],
+            input_tokens=usage.input_tokens or 0,
+            output_tokens=usage.output_tokens or 0,
+            cost=usage.total_cost if usage.total_cost is not None else 0.0,
+            char_count=len(message),
+        )
+
+        return message, usage
+
+    def _verify_commit_format(self, message: str) -> None:
+        """Helper method to verify commit message format"""
+        commit_types = ["feat", "fix", "docs", "style", "refactor", "test", "chore"]
+        pattern = r"\b(?:" + "|".join(commit_types) + r")\b"
+        match = re.search(pattern, message, re.IGNORECASE)
+        found_type = match.group(0).lower() if match else ""
+
+        assert (
+            found_type in commit_types
+        ), f"Expected commit type not found. Found '{found_type}' instead."
+
+
+class TestAIClientUnit:
+    """Unit tests for AIClient that don't require API access"""
+
+    def test_client_initialization(self) -> None:
+        """Test that client initializes with valid config"""
+        config = {
+            "ai": {
+                "provider": "test",
+                "model": "test-model",
+                "api_key": "dummy-key",
+            },
+            "commit": {"include_emoji": False},
+        }
+        client = AIClient(config)
+        assert client is not None
+        # The client stores only the "ai" portion of the config
+        assert client.config == config["ai"]
+
+    def test_invalid_config(self) -> None:
+        """Test that client raises error with invalid config"""
+        # Test completely empty config
+        with pytest.raises(KeyError):
+            AIClient({})
+
+        # Test config with empty ai section
+        with pytest.raises(KeyError):
+            AIClient({"ai": {}})
+
+    def test_missing_api_key(self) -> None:
+        """Test that client raises error with missing API key"""
+        config = {
+            "ai": {
+                "provider": "test",
+                "model": "test-model",
+            }
+        }
+        with pytest.raises(KeyError):
+            AIClient(config)

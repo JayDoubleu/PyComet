@@ -28,6 +28,9 @@ def pytest_configure(config: Config) -> None:
     config.addinivalue_line(
         "markers", "ai_models: mark tests that interact with AI model APIs"
     )
+    config.addinivalue_line(
+        "markers", "integration: mark tests that require API access"
+    )
 
 
 def pytest_collection_modifyitems(config: Config, items: List[Item]) -> None:

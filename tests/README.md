@@ -63,18 +63,25 @@ uv run pytest tests/ -k "test_basic_response"
   - GitHub (Phi-3.5)
   - OpenRouter
 
-### Test Categories
-1. Basic Response Tests (`test_basic_response`)
-   - Validates commit message generation
-   - Checks conventional commit format
-   - Verifies emoji inclusion
-   - Tests with different git diffs
+## Test Categories
 
-2. Verbose Output Tests (`test_verbose_output`)
-   - Shows detailed model responses
-   - Displays token usage and costs
-   - Provides performance metrics
-   - Requires `--show-llm-output` flag
+### Unit Tests
+Run tests that don't require API access:
+```bash
+uv run pytest tests/ -m "not integration"
+```
+
+### Integration Tests
+Run tests that require API access:
+```bash
+uv run pytest tests/ -m "integration"
+```
+
+### Verbose Tests
+Run tests with detailed output:
+```bash
+uv run pytest tests/ -m "verbose_only" --show-llm-output
+```
 
 ## Development
 
