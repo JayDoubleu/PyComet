@@ -1,3 +1,4 @@
+import re
 from typing import Any, Dict, Tuple
 
 import pytest
@@ -73,10 +74,17 @@ class TestAIModels:
         assert message is not None, "Message should not be None"
         assert len(message) > 0, "Message should not be empty"
         assert isinstance(message, str), "Message should be a string"
-        assert any(
-            t in message
-            for t in ["feat", "fix", "docs", "style", "refactor", "test", "chore"]
-        ), "Message should use conventional commit format"
+        # Define the valid commit types
+        commit_types = ["feat", "fix", "docs", "style", "refactor", "test", "chore"]
+        # Create a regex pattern to search for any of the commit types as whole words
+        pattern = r"\b(?:" + "|".join(commit_types) + r")\b"
+        match = re.search(pattern, message, re.IGNORECASE)
+        found_type = match.group(0).lower() if match else ""
+
+        # Verify that one of the valid commit types was found in the message
+        assert (
+            found_type in commit_types
+        ), f"Expected commit type not found. Found '{found_type}' instead."
 
     @pytest.mark.verbose_only
     @pytest.mark.parametrize(

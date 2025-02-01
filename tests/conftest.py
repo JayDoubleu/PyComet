@@ -72,7 +72,7 @@ def gemini_config() -> Dict[str, Any]:
             "model": "gemini/gemini-1.5-pro",
             "api_key": os.getenv("TEST_GEMINI_API_KEY"),
         },
-        "commit": {"include_emoji": True},
+        "commit": {"include_emoji": False},
     }
 
 
@@ -85,7 +85,7 @@ def anthropic_config() -> Dict[str, Any]:
             "model": "claude-3-sonnet-20240229",
             "api_key": os.getenv("TEST_ANTHROPIC_API_KEY"),
         },
-        "commit": {"include_emoji": True},
+        "commit": {"include_emoji": False},
     }
 
 
@@ -98,7 +98,7 @@ def openai_config() -> Dict[str, Any]:
             "model": "gpt-4o-mini",
             "api_key": os.getenv("TEST_OPENAI_API_KEY"),
         },
-        "commit": {"include_emoji": True},
+        "commit": {"include_emoji": False},
     }
 
 
@@ -108,10 +108,10 @@ def groq_config() -> Dict[str, Any]:
     return {
         "ai": {
             "provider": "groq",
-            "model": "groq/deepseek-r1-distill-llama-70b",
+            "model": "groq/llama-3.3-70b-versatile",
             "api_key": os.getenv("TEST_GROQ_API_KEY"),
         },
-        "commit": {"include_emoji": True},
+        "commit": {"include_emoji": False},
     }
 
 
@@ -127,7 +127,7 @@ def azure_openai_config() -> Dict[str, Any]:
             "api_version": os.getenv("TEST_AZURE_API_VERSION", "2024-02-15-preview"),
             "deployment_name": os.getenv("TEST_AZURE_DEPLOYMENT_NAME"),
         },
-        "commit": {"include_emoji": True},
+        "commit": {"include_emoji": False},
     }
 
 
@@ -140,7 +140,7 @@ def xai_config() -> Dict[str, Any]:
             "model": "xai/grok-2",
             "api_key": os.getenv("TEST_XAI_API_KEY"),
         },
-        "commit": {"include_emoji": True},
+        "commit": {"include_emoji": False},
     }
 
 
@@ -153,7 +153,7 @@ def github_config() -> Dict[str, Any]:
             "model": "github/phi-3.5-mini-instruct",
             "api_key": os.getenv("TEST_GITHUB_API_KEY"),
         },
-        "commit": {"include_emoji": True},
+        "commit": {"include_emoji": False},
     }
 
 
@@ -169,7 +169,7 @@ def openrouter_config() -> Dict[str, Any]:
                 "TEST_OPENROUTER_API_BASE", "https://openrouter.ai/api/v1"
             ),
         },
-        "commit": {"include_emoji": True},
+        "commit": {"include_emoji": False},
     }
 
 
