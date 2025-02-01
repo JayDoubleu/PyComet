@@ -79,7 +79,11 @@ def _get_detailed_mode(
 @click.option(
     "--verbose", "-v", is_flag=True, help="Show detailed execution information"
 )
-@click.option("--emoji/--no-emoji", default=None, help="Override emoji inclusion in commit messages")
+@click.option(
+    "--emoji/--no-emoji",
+    default=None,
+    help="Override emoji inclusion in commit messages",
+)
 @click.option("--prompt", "-p", help="Override system prompt for this commit")
 @click.option("--editor", "-e", help="Override editor for this commit")
 @click.option(
@@ -147,7 +151,7 @@ def commit(
             click.echo("Opening editor for message review...")
         editor = get_editor(config, verbose=verbose)
         # Preserve newlines in editor
-        edited_message: str = click.edit(initial_message + '\n', editor=editor) or ""
+        edited_message: str = click.edit(initial_message + "\n", editor=editor) or ""
         if not edited_message:
             click.echo("Commit aborted")
             return
@@ -159,7 +163,7 @@ def commit(
         # Use write to preserve newlines in output
         click.echo("Created commit:")
         click.echo("------------------------")
-        click.get_text_stream('stdout').write(edited_message)
+        click.get_text_stream("stdout").write(edited_message)
         click.echo("------------------------")
 
     except Exception as e:
@@ -170,7 +174,11 @@ def commit(
 @click.option(
     "--verbose", "-v", is_flag=True, help="Show detailed execution information"
 )
-@click.option("--emoji/--no-emoji", default=None, help="Override emoji inclusion in commit messages")
+@click.option(
+    "--emoji/--no-emoji",
+    default=None,
+    help="Override emoji inclusion in commit messages",
+)
 @click.option("--prompt", "-p", help="Override system prompt for this commit")
 @click.option(
     "--detailed/--no-detailed",
@@ -231,7 +239,7 @@ def preview(
         click.echo("\nPreview of commit message:")
         click.echo("------------------------")
         # Use write to preserve newlines exactly
-        click.get_text_stream('stdout').write(initial_message + '\n')
+        click.get_text_stream("stdout").write(initial_message + "\n")
         click.echo("------------------------")
         click.echo("\nTo create this commit, run: pycomet commit")
 

@@ -1,7 +1,7 @@
-import subprocess
-from typing import List, Optional
-import tempfile
 import os
+import subprocess
+import tempfile
+from typing import List, Optional
 
 
 class GitRepo:
@@ -36,7 +36,7 @@ class GitRepo:
     def create_commit(message: str) -> None:
         """Create a commit with the given message."""
         # Use -F flag to read message from file to preserve multiline format
-        with tempfile.NamedTemporaryFile(mode='w', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", delete=False) as f:
             f.write(message)
             f.flush()
             try:

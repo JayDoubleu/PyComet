@@ -151,7 +151,9 @@ Remember: Return ONLY the commit message, no explanations."""
 
         if self.verbose:
             click.echo(f"Commit config: {self.commit_config}")
-            click.echo(f"Include emoji setting: {self.commit_config.get('include_emoji')}")
+            click.echo(
+                f"Include emoji setting: {self.commit_config.get('include_emoji')}"
+            )
 
         # Base format rules for each mode
         if detailed:

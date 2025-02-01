@@ -38,7 +38,7 @@ def pytest_collection_modifyitems(config: Config, items: List[Item]) -> None:
         for item in items:
             if "verbose_only" in item.keywords:
                 item.add_marker(skip_verbose)
-    
+
     # Skip tests if API keys not available
     provider_env_map = {
         "test_anthropic": "TEST_ANTHROPIC_API_KEY",
@@ -50,7 +50,7 @@ def pytest_collection_modifyitems(config: Config, items: List[Item]) -> None:
         "test_github": "TEST_GITHUB_API_KEY",
         "test_openrouter": "TEST_OPENROUTER_API_KEY",
     }
-    
+
     for item in items:
         for provider, env_var in provider_env_map.items():
             if provider in item.name and not os.getenv(env_var):
