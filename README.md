@@ -87,8 +87,9 @@ uv run pycomet commit --editor vim
 
 ## Configuration
 
-PyComet uses a YAML config file at `~/.config/pycomet/config.yaml`:
+PyComet uses a YAML config file at `~/.config/pycomet/config.yaml`. For detailed configuration options and examples for all supported AI providers, see [CONFIGS.md](CONFIGS.md).
 
+Basic configuration example:
 ```yaml
 ai:
   provider: anthropic
@@ -101,6 +102,8 @@ commit:
 ```
 
 ### Supported AI Providers
+
+Here are some common provider configurations. For a complete list and detailed options, see [CONFIGS.md](CONFIGS.md).
 
 #### Anthropic Claude (Default)
 ```yaml
