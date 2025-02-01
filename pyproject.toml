@@ -21,7 +21,6 @@ build-backend = "hatchling.build"
 
 [project.scripts]
 pycomet = "pycomet.cli:cli"
-pcomet = "pycomet.cli:cli"
 pycomet-cli = "pycomet.cli:cli"
 
 [project.optional-dependencies]
