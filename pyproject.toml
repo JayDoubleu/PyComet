@@ -1,5 +1,5 @@
 [project]
-name = "pycomet"
+name = "pycomet-cli"
 version = "0.1.0"
 description = "AI-powered Git commit messages"
 authors = [
@@ -22,6 +22,7 @@ build-backend = "hatchling.build"
 [project.scripts]
 pycomet = "pycomet.cli:cli"
 pcomet = "pycomet.cli:cli"
+pycomet-cli = "pycomet.cli:cli"
 
 [project.optional-dependencies]
 test = [
@@ -42,6 +43,7 @@ tests = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/pycomet"]
+package-name = "pycomet"
 include = ["py.typed"]
 
 [tool.black]
