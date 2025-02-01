@@ -2,37 +2,83 @@
 
 PyComet is an AI-powered Git commit message generator that helps you create meaningful and consistent commit messages using advanced AI models.
 
+## Installation & Usage Options
+
+### Recommended: Global Installation with UV
+Install PyComet globally with uv (recommended for better dependency management):
+```bash
+uv tool install pycomet-cli
+```
+
+### Alternative: Standard Installation (pip)
+```bash
+# Install from PyPI
+pip install pycomet-cli
+
+# Or with specific version
+pip install pycomet-cli==0.1.2
+```
+
+### Quick Run with UV (No Installation)
+Use `uvx` to run PyComet directly without installing:
+```bash
+uvx pycomet-cli
+```
+This is equivalent to `uv tool run pycomet-cli`
+
+After installation (via any method), you can use these commands:
+```bash
+pycomet commit    # Generate and create a commit
+pycomet-cli commit    # Alternative command name
+```
+
+> **Note**: Both command names (`pycomet` and `pycomet-cli`) are available and function identically.
+
 ## Quick Start
 
-1. Install uv (if not already installed):
+### Option 1: Install and Run (Recommended)
 ```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
+# Install globally (recommended)
+uv tool install pycomet-cli
+# Or via pip
+pip install pycomet-cli
+
+# Configure your AI provider
+pycomet config
+
+# Use in any git repository
+git add .
+pycomet preview  # Preview the message
+pycomet commit   # Create commit
 ```
 
-2. Install PyComet:
+### Option 2: Run from Source
 ```bash
+# Clone the repository
 git clone https://github.com/jaydoubleu/pycomet.git
 cd pycomet
+
+# Install dependencies
 uv sync
-```
 
-3. Configure your AI provider:
-```bash
+# Configure your AI provider
 uv run pycomet config
-```
-Edit the config file to add your API key and preferred settings.
 
-4. Start using PyComet:
-```bash
-# Stage your changes
+# Use PyComet
 git add .
-
-# Preview the AI-generated message
-uv run pycomet preview
-
-# Create a commit
-uv run pycomet commit
+uv run pycomet preview  # Preview the message
+uv run pycomet commit   # Create commit
 ```
+
+### Option 3: Direct Execution (No Clone)
+```bash
+# Run directly without installing
+uvx pycomet-cli config
+uvx pycomet-cli preview
+uvx pycomet-cli commit
+```
+
+After configuration, edit `~/.config/pycomet/config.yaml` to add your API key and preferred settings.
 
 ## Features
 
