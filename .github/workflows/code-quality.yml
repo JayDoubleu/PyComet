@@ -7,6 +7,7 @@ on:
 jobs:
   code-quality:
     runs-on: ubuntu-latest
+    # Split into two workflows - one for PRs from forks, one for internal PRs
     steps:
       - uses: actions/checkout@v4
 
@@ -37,8 +38,27 @@ jobs:
       - name: Run type checking
         run: uv run mypy .
 
-      - name: Run tests with coverage
+      # Only run integration tests on internal PRs
+      - name: Run integration tests
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          TEST_ANTHROPIC_API_KEY: ${{ secrets.TEST_ANTHROPIC_API_KEY }}
+          TEST_OPENAI_API_KEY: ${{ secrets.TEST_OPENAI_API_KEY }}
+          TEST_GEMINI_API_KEY: ${{ secrets.TEST_GEMINI_API_KEY }}
+          TEST_AZURE_API_KEY: ${{ secrets.TEST_AZURE_API_KEY }}
+          TEST_AZURE_API_BASE: ${{ secrets.TEST_AZURE_API_BASE }}
+          TEST_AZURE_API_VERSION: ${{ secrets.TEST_AZURE_API_VERSION }}
+          TEST_AZURE_DEPLOYMENT_NAME: ${{ secrets.TEST_AZURE_DEPLOYMENT_NAME }}
+          TEST_GROQ_API_KEY: ${{ secrets.TEST_GROQ_API_KEY }}
+          TEST_XAI_API_KEY: ${{ secrets.TEST_XAI_API_KEY }}
+          TEST_GITHUB_API_KEY: ${{ secrets.TEST_GITHUB_API_KEY }}
+          TEST_OPENROUTER_API_KEY: ${{ secrets.TEST_OPENROUTER_API_KEY }}
         run: uv run pytest tests/ --cov=./ --cov-report=xml
+
+      # Run unit tests only for external PRs
+      - name: Run unit tests
+        if: github.event.pull_request.head.repo.full_name != github.repository
+        run: uv run pytest tests/ --cov=./ --cov-report=xml -m "not integration"
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
