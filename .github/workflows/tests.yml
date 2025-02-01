@@ -61,7 +61,7 @@ jobs:
         uv run pytest tests/ -v -k "not (anthropic or openai or gemini)" --durations=10 --cov-append
     
     - name: Upload coverage
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         file: ./coverage.xml

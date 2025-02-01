@@ -13,6 +13,8 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
+          # Specify version directly as fallback if file doesn't exist
+          python-version: '3.12.2'
           python-version-file: '.python-version'
           cache: 'pip'
 
@@ -23,9 +25,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          uv pip install --system
           uv sync
-          uv add --dev black ruff mypy pre-commit
+          uv add --dev black ruff mypy pre-commit pytest pytest-cov
 
       - name: Run Black formatter check
         run: uv run black . --check
@@ -34,4 +35,14 @@ jobs:
         run: uv run ruff check .
 
       - name: Run type checking
-        run: uv run mypy . 
+        run: uv run mypy .
+
+      - name: Run tests with coverage
+        run: uv run pytest tests/ --cov=./ --cov-report=xml
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.xml
+          fail_ci_if_error: true
