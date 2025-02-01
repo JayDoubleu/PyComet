@@ -79,7 +79,7 @@ def _get_detailed_mode(
 @click.option(
     "--verbose", "-v", is_flag=True, help="Show detailed execution information"
 )
-@click.option("--emoji/--no-emoji", help="Override emoji inclusion in commit messages")
+@click.option("--emoji/--no-emoji", default=None, help="Override emoji inclusion in commit messages")
 @click.option("--prompt", "-p", help="Override system prompt for this commit")
 @click.option("--editor", "-e", help="Override editor for this commit")
 @click.option(
@@ -99,7 +99,7 @@ def commit(
     try:
         if verbose:
             click.echo("Loading configuration...")
-        config = load_config()
+        config = load_config(verbose=verbose)
 
         # Warn about emoji flags with custom prompt (check before applying overrides)
         _warn_if_emoji_with_custom_prompt(config, emoji is not None, prompt, verbose)
@@ -146,16 +146,21 @@ def commit(
         if verbose:
             click.echo("Opening editor for message review...")
         editor = get_editor(config, verbose=verbose)
-        edited_message: str = click.edit(initial_message, editor=editor) or ""
+        # Preserve newlines in editor
+        edited_message: str = click.edit(initial_message + '\n', editor=editor) or ""
         if not edited_message:
             click.echo("Commit aborted")
             return
 
-        # Create commit
+        # Create commit with multiline message
         if verbose:
             click.echo("Creating commit...")
-        git.create_commit(edited_message)
-        click.echo(f"Created commit: {edited_message}")
+        git.create_commit(edited_message.rstrip())
+        # Use write to preserve newlines in output
+        click.echo("Created commit:")
+        click.echo("------------------------")
+        click.get_text_stream('stdout').write(edited_message)
+        click.echo("------------------------")
 
     except Exception as e:
         click.echo(f"Error: {str(e)}", err=True)
@@ -165,7 +170,7 @@ def commit(
 @click.option(
     "--verbose", "-v", is_flag=True, help="Show detailed execution information"
 )
-@click.option("--emoji/--no-emoji", help="Override emoji inclusion in commit messages")
+@click.option("--emoji/--no-emoji", default=None, help="Override emoji inclusion in commit messages")
 @click.option("--prompt", "-p", help="Override system prompt for this commit")
 @click.option(
     "--detailed/--no-detailed",
@@ -183,7 +188,7 @@ def preview(
     try:
         if verbose:
             click.echo("Loading configuration...")
-        config = load_config()
+        config = load_config(verbose=verbose)
 
         # Warn about emoji flags with custom prompt (check before applying overrides)
         _warn_if_emoji_with_custom_prompt(config, emoji is not None, prompt, verbose)
@@ -225,7 +230,8 @@ def preview(
         # Show the preview
         click.echo("\nPreview of commit message:")
         click.echo("------------------------")
-        click.echo(initial_message)
+        # Use write to preserve newlines exactly
+        click.get_text_stream('stdout').write(initial_message + '\n')
         click.echo("------------------------")
         click.echo("\nTo create this commit, run: pycomet commit")
 

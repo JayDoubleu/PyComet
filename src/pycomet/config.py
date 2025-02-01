@@ -91,19 +91,40 @@ def get_config_path() -> Path:
     return get_config_dir() / "config.yaml"
 
 
-def load_config() -> Dict[str, Any]:
+def merge_configs(default: Dict[str, Any], user: Dict[str, Any]) -> Dict[str, Any]:
+    """Deep merge user config with defaults."""
+    result = default.copy()
+    for key, value in user.items():
+        if key in result and isinstance(result[key], dict) and isinstance(value, dict):
+            result[key] = merge_configs(result[key], value)
+        else:
+            result[key] = value
+    return result
+
+
+def load_config(verbose: bool = False) -> Dict[str, Any]:
     """Load configuration, creating default if it doesn't exist."""
     config_path = get_config_path()
 
     if not config_path.exists():
         save_config(DEFAULT_CONFIG)
-        return dict(DEFAULT_CONFIG.copy())  # Explicitly cast to Dict[str, Any]
+        return dict(DEFAULT_CONFIG.copy())
 
     with open(config_path, "r") as f:
-        config_data = yaml.safe_load(f)
+        user_config = yaml.safe_load(f) or {}
+        if verbose:
+            if "commit" in user_config:
+                print(f"User config commit section: {user_config['commit']}")
+            print(f"Default config commit section: {DEFAULT_CONFIG['commit']}")
+        # Merge with defaults
+        config_data = merge_configs(DEFAULT_CONFIG, user_config)
+        if verbose:
+            print(f"Merged config commit section: {config_data['commit']}")
         # Validate config with Pydantic
-        PyCometConfig(**config_data)
-        return dict(config_data)  # Explicitly cast to Dict[str, Any]
+        validated_config = PyCometConfig(**config_data)
+        if verbose:
+            print(f"Validated config commit section: {validated_config.commit}")
+        return dict(config_data)
 
 
 def save_config(config: Dict[str, Any]) -> None:

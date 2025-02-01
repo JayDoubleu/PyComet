@@ -130,7 +130,7 @@ Remember: Return ONLY the commit message, no explanations."""
 
     def __init__(self, config: Dict, verbose: bool = False):
         self.config = config["ai"]
-        self.commit_config = config.get("commit", {})
+        self.commit_config = config["commit"]
         self.verbose = verbose
         self.last_usage: Optional[ModelUsage] = None
 
@@ -148,6 +148,10 @@ Remember: Return ONLY the commit message, no explanations."""
 
         use_emoji = self.commit_config.get("include_emoji", True)
         detailed = self.commit_config.get("detailed", False)
+
+        if self.verbose:
+            click.echo(f"Commit config: {self.commit_config}")
+            click.echo(f"Include emoji setting: {self.commit_config.get('include_emoji')}")
 
         # Base format rules for each mode
         if detailed:
@@ -353,58 +357,21 @@ Add support for OAuth2 authentication flow
 
                 message = str(response.choices[0].message.content.strip())
 
+                if self.verbose:
+                    click.echo("\nRaw AI Response:")
+                    click.echo("-" * 40)
+                    click.echo(message)
+                    click.echo("-" * 40)
+
                 # Remove any "thinking" tags or stray whitespace
                 message = re.sub(r"<think>.*?</think>", "", message, flags=re.DOTALL)
                 message = message.strip()
 
-                # Ensure message starts with known type if not custom
-                if not any(message.startswith(t) for t in self.COMMIT_TYPES):
-                    message = f"chore: {message}"
-
-                # If we're including emojis but none are present, add one based on type
-                if self.commit_config.get("include_emoji", True):
-                    emoji_map = {
-                        "feat": "✨",
-                        "fix": "🐛",
-                        "docs": "📚",
-                        "style": "💄",
-                        "refactor": "♻️",
-                        "test": "✅",
-                        "chore": "🔧",
-                        "perf": "🚀",
-                    }
-
-                    # Check if message already has an emoji
-                    has_emoji = any(c in message for c in emoji_map.values())
-
-                    if not has_emoji:
-                        # Extract commit type
-                        match = re.match(
-                            r"^(feat|fix|docs|style|refactor|test|chore|perf)(\(.*?\))?:",
-                            message,
-                        )
-                        if match:
-                            commit_type = match.group(1)
-                            emoji = emoji_map.get(
-                                commit_type, "🔧"
-                            )  # Default to chore emoji
-                            message = f"{emoji} {message}"
-                        else:
-                            # If no type match found, default to chore emoji
-                            message = f"🔧 {message}"
-
-                # If we're not including emojis, remove them:
-                elif not self.commit_config.get("include_emoji", True):
-                    emoji_pattern = r"[✨🐛📚💄♻️✅🔧🚀]"
-                    message = re.sub(emoji_pattern, "", message)
-                    # remove extra spaces if any
-                    message = re.sub(r"\s+", " ", message).strip()
-
-                # Final check to ensure emoji is present when required
-                if self.commit_config.get("include_emoji", True):
-                    has_emoji = any(c in message for c in emoji_map.values())
-                    if not has_emoji:
-                        message = f"🔧 {message}"  # Add default emoji as fallback
+                if self.verbose:
+                    click.echo("\nProcessed Message:")
+                    click.echo("-" * 40)
+                    click.echo(message)
+                    click.echo("-" * 40)
 
                 return message
 
