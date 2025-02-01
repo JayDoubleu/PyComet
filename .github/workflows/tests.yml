@@ -3,8 +3,6 @@ name: Tests
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -57,10 +55,10 @@ jobs:
     - name: Run tests
       run: |
         # Run core tests first (most reliable providers)
-        uv run pytest tests/ -v -k "anthropic or openai or gemini" --durations=10
+        uv run pytest tests/ -v -k "anthropic or openai or gemini" --durations=10 --cov=./ --cov-report=xml
         
         # Run extended provider tests
-        uv run pytest tests/ -v -k "not (anthropic or openai or gemini)" --durations=10
+        uv run pytest tests/ -v -k "not (anthropic or openai or gemini)" --durations=10 --cov-append
     
     - name: Upload coverage
       uses: codecov/codecov-action@v4
