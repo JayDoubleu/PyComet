@@ -18,7 +18,7 @@ uv sync
 
 3. Install development dependencies:
 ```bash
-uv add --dev black ruff pytest pytest-cov mypy types-PyYAML
+uv add --dev black ruff pytest pytest-cov mypy types-PyYAML pre-commit
 ```
 
 4. Set up test environment:
@@ -73,6 +73,23 @@ Before submitting a PR, ensure:
 4. Type hints are valid (mypy)
 5. Test coverage is maintained
 6. LLM tests pass with `--show-llm-output`
+
+To automate these checks, we use pre-commit hooks:
+
+1. Install pre-commit:
+```bash
+uv add --dev pre-commit
+```
+
+2. Install the pre-commit hooks:
+```bash
+uv run pre-commit install
+```
+
+3. Run the hooks manually (if needed):
+```bash
+uv run pre-commit run --all-files
+```
 
 ## Contributing
 

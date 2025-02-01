@@ -1,0 +1,23 @@
+repos:
+- repo: local
+  hooks:
+    - id: black
+      name: black
+      entry: uv run black
+      language: system
+      types: [python]
+      require_serial: true
+
+    - id: ruff
+      name: ruff
+      entry: uv run ruff check
+      language: system
+      types: [python]
+      require_serial: true
+
+    - id: mypy
+      name: mypy
+      entry: uv run mypy
+      language: system
+      types: [python]
+      require_serial: true 
