@@ -154,10 +154,6 @@ Add support for OAuth2 authentication flow
 - Add user session management
 ```
 
-## Development
-
-For detailed development information, see our [Development Guide](DEVELOPMENT.md).
-
 ## Contributing
 
 1. Fork the repository
