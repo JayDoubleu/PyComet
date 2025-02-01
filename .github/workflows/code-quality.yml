@@ -1,0 +1,47 @@
+name: Code Quality Checks
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: '.python-version'
+          cache: 'pip'
+
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: Install dependencies
+        run: |
+          uv pip install --system
+          uv sync
+          uv add --dev black ruff pytest pytest-cov mypy types-PyYAML pre-commit
+
+      - name: Run Black formatter check
+        run: uv run black . --check
+
+      - name: Run Ruff linter
+        run: uv run ruff check .
+
+      - name: Run type checking
+        run: uv run mypy .
+
+      - name: Run tests with coverage
+        run: uv run pytest tests/ --cov=./ --cov-report=xml
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.xml
+          fail_ci_if_error: true 
