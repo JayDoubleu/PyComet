@@ -7,7 +7,7 @@ authors = [
 ]
 dependencies = [
     "click>=8.0.0",
-    "litellm==1.59.10",
+    "litellm==1.60.8",
     "pyyaml>=6.0.0",
     "python-dotenv>=1.0.0"
 ]
