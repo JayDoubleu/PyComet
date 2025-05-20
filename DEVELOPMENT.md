@@ -34,6 +34,8 @@ PyComet includes a comprehensive test suite that verifies functionality across m
 
 ### Running Tests
 
+#### Local Test Execution
+
 Basic test execution:
 ```bash
 # Run all tests
@@ -48,6 +50,26 @@ uv run pytest tests/ --show-llm-output
 # Run tests for specific model with LLM output
 uv run pytest tests/ -k "gemini" --show-llm-output
 ```
+
+#### Docker Test Execution
+
+You can also run tests in an isolated Docker environment:
+
+```bash
+# Make the script executable (if not already)
+chmod +x docker-test.sh
+
+# Run all tests (excluding integration tests)
+./docker-test.sh all
+
+# Run only git hooks tests
+./docker-test.sh hooks
+
+# Run specific tests with custom arguments
+./docker-test.sh tests/test_git.py -v
+```
+
+The Docker testing environment ensures consistent test execution across different development setups.
 
 For detailed information about testing options and configurations, see [tests/README.md](tests/README.md).
 
