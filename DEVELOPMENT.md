@@ -34,6 +34,8 @@ PyComet includes a comprehensive test suite that verifies functionality across m
 
 ### Running Tests
 
+#### Local Test Execution
+
 Basic test execution:
 ```bash
 # Run all tests
@@ -48,6 +50,26 @@ uv run pytest tests/ --show-llm-output
 # Run tests for specific model with LLM output
 uv run pytest tests/ -k "gemini" --show-llm-output
 ```
+
+#### Docker Test Execution
+
+You can also run tests in an isolated Docker environment:
+
+```bash
+# Make the script executable (if not already)
+chmod +x docker-test.sh
+
+# Run all tests (excluding integration tests)
+./docker-test.sh all
+
+# Run only git hooks tests
+./docker-test.sh hooks
+
+# Run specific tests with custom arguments
+./docker-test.sh tests/test_git.py -v
+```
+
+The Docker testing environment ensures consistent test execution across different development setups.
 
 For detailed information about testing options and configurations, see [tests/README.md](tests/README.md).
 
@@ -89,6 +111,35 @@ uv run pre-commit install
 3. Run the hooks manually (if needed):
 ```bash
 uv run pre-commit run --all-files
+```
+
+## Git Hooks Integration
+
+PyComet can integrate with Git's `prepare-commit-msg` hook to automatically generate AI-powered commit messages when you run `git commit`.
+
+### Setting up Git Hooks
+
+To install the Git hooks integration:
+
+```bash
+# Install the prepare-commit-msg hook
+pycomet hooks install
+
+# To uninstall the hook
+pycomet hooks uninstall
+```
+
+When the hook is installed, running `git commit` (without a `-m` message) will:
+1. Generate an AI-powered commit message based on staged changes
+2. Pre-fill the commit message in your editor
+3. Allow you to edit the message before finalizing the commit
+
+The hook won't run when you provide a message with `git commit -m "message"` or during 
+merge/rebase operations.
+
+To temporarily disable the hook for a specific commit, you can run:
+```bash
+git -c core.hooksPath=/dev/null commit
 ```
 
 ## Contributing

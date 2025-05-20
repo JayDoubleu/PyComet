@@ -1,0 +1,18 @@
+FROM python:3.12-slim
+
+# Install git
+RUN apt-get update && apt-get install -y \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set up work directory
+WORKDIR /app
+
+# Copy project files
+COPY . .
+
+# Set up Python path for running tests
+ENV PYTHONPATH="${PYTHONPATH}:/app"
+
+# Run tests by default (with -k option to specify test module)
+CMD ["pytest", "tests/", "-v"]

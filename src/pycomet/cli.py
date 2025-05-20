@@ -247,5 +247,51 @@ def preview(
         click.echo(f"Error: {str(e)}", err=True)
 
 
+@cli.group()
+def hooks() -> None:
+    """Manage git hooks integration"""
+    pass
+
+
+@hooks.command("install")
+@click.option(
+    "--verbose", "-v", is_flag=True, help="Show detailed execution information"
+)
+def hooks_install(verbose: bool) -> None:
+    """Install git hooks for automatic commit message generation"""
+    if verbose:
+        click.echo("Installing prepare-commit-msg hook...")
+
+    git = GitRepo()
+    success, message = git.install_prepare_commit_msg_hook()
+
+    if success:
+        click.echo(f"✅ {message}")
+        click.echo("\nThe hook will generate AI commit messages when you run:")
+        click.echo("  git commit")
+        click.echo("\nYou can still use PyComet directly with:")
+        click.echo("  pycomet commit")
+    else:
+        click.echo(f"❌ {message}", err=True)
+
+
+@hooks.command("uninstall")
+@click.option(
+    "--verbose", "-v", is_flag=True, help="Show detailed execution information"
+)
+def hooks_uninstall(verbose: bool) -> None:
+    """Uninstall PyComet git hooks"""
+    if verbose:
+        click.echo("Uninstalling prepare-commit-msg hook...")
+
+    git = GitRepo()
+    success, message = git.uninstall_prepare_commit_msg_hook()
+
+    if success:
+        click.echo(f"✅ {message}")
+    else:
+        click.echo(f"❌ {message}", err=True)
+
+
 if __name__ == "__main__":
     cli()

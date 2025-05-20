@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  pycomet-tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    volumes:
+      - .:/app
+    environment:
+      # You can uncomment and provide these for integration tests if needed
+      # TEST_ANTHROPIC_API_KEY: ${TEST_ANTHROPIC_API_KEY}
+      # TEST_OPENAI_API_KEY: ${TEST_OPENAI_API_KEY}
+      # TEST_GEMINI_API_KEY: ${TEST_GEMINI_API_KEY}
+    # By default, run unit tests only
+    command: pytest tests/ -v -m "not integration"
+
+  # Service for running git hooks specific tests
+  hooks-tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    volumes:
+      - .:/app
+    command: pytest tests/test_git.py tests/test_cli_hooks.py -v
