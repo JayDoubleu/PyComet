@@ -91,6 +91,35 @@ uv run pre-commit install
 uv run pre-commit run --all-files
 ```
 
+## Git Hooks Integration
+
+PyComet can integrate with Git's `prepare-commit-msg` hook to automatically generate AI-powered commit messages when you run `git commit`.
+
+### Setting up Git Hooks
+
+To install the Git hooks integration:
+
+```bash
+# Install the prepare-commit-msg hook
+pycomet hooks install
+
+# To uninstall the hook
+pycomet hooks uninstall
+```
+
+When the hook is installed, running `git commit` (without a `-m` message) will:
+1. Generate an AI-powered commit message based on staged changes
+2. Pre-fill the commit message in your editor
+3. Allow you to edit the message before finalizing the commit
+
+The hook won't run when you provide a message with `git commit -m "message"` or during 
+merge/rebase operations.
+
+To temporarily disable the hook for a specific commit, you can run:
+```bash
+git -c core.hooksPath=/dev/null commit
+```
+
 ## Contributing
 
 1. Fork the repository

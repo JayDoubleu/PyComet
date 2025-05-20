@@ -95,6 +95,7 @@ After configuration, edit `~/.config/pycomet/config.yaml` to add your API key an
 - 🔧 **Customizable**: Configure prompts, formats, and preferences
 - 📊 **Usage Tracking**: Monitor token usage and costs
 - 🚀 **Rate Limiting**: Automatic handling of API rate limits
+- 🪝 **Git Hooks**: Integrate with git's prepare-commit-msg hook
 
 ## Basic Commands
 
@@ -130,6 +131,22 @@ uv run pycomet commit --prompt "$(cat my-prompt.txt)"
 # Specify editor
 uv run pycomet commit --editor vim
 ```
+
+## Git Hooks Integration
+
+PyComet can integrate with Git's built-in hooks system to automatically generate commit messages:
+
+```bash
+# Install the prepare-commit-msg hook
+pycomet hooks install
+
+# Uninstall the hook
+pycomet hooks uninstall
+```
+
+When the hook is installed, running `git commit` will automatically generate an AI commit message and pre-fill it in your editor. You can still edit the message before the commit is finalized.
+
+See [DEVELOPMENT.md](DEVELOPMENT.md#git-hooks-integration) for more details.
 
 ## Configuration
 
